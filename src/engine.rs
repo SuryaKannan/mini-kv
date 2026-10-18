@@ -1,3 +1,5 @@
+use crate::store::MiniKV;
+
 enum Command {
     Get,
     Set,
@@ -17,23 +19,51 @@ impl Command {
         }
     }
 
-    fn execute(self) {
+    fn execute(self, cmds: Vec<String>, store: &mut MiniKV) -> Result<bool, String>{
         match self {
-            Command::Get => println!("Fetching data..."),
-            Command::Set => println!("Saving data..."),
-            Command::Delete => println!("Removing data..."),
-            Command::Exit => println!("Exiting program..."),
-            Command::Invalid => println!("Invalid command..."),
+            Command::Get => self.get_cmd(&cmds, store),
+            Command::Set => self.set_cmd(&cmds, store),
+            Command::Delete => self.delete_cmd(&cmds,store),
+            Command::Exit => self.exit_cmd(&cmds,store),
+            Command::Invalid => self.invalid_cmd(&cmds,store),
         }
+    }
+
+    fn get_cmd(&self, cmds: &Vec<String>, store: &mut MiniKV) -> Result<bool, String> {
+        println!("{cmds:?}");
+        Ok(true)
+    }
+
+    fn set_cmd(&self, cmds: &Vec<String>, store: &mut MiniKV) -> Result<bool, String> {
+        println!("{cmds:?}");
+        store.store.insert(<String as Clone>::clone(&cmds[1]), <String as Clone>::clone(&cmds[2]));
+        Ok(true)
+    }
+
+    fn delete_cmd(&self, cmds: &Vec<String>, store: &mut MiniKV) -> Result<bool, String> {
+        println!("{cmds:?}");
+        Ok(true)
+    }
+
+    fn exit_cmd(&self, cmds: &Vec<String>, store: &mut MiniKV) -> Result<bool, String> {
+        println!("{cmds:?}");
+        Ok(true)
+    }
+
+    fn invalid_cmd(&self, cmds: &Vec<String>, store: &mut MiniKV) -> Result<bool, String> {
+        println!("{cmds:?}");
+        Ok(true)
     }
 }
 
-pub fn mini_kv(cmds: &str) -> Result<bool, String> {
+pub fn process_request(cmds: &str, store: &mut MiniKV) -> Result<bool, String> {
 
     let cmd_array = parse_cmds(cmds);
     let cmd = Command::from_str(&cmd_array[0]);
 
-    cmd.execute();
+    cmd.execute(cmd_array, store);
+
+    println!("{store:?}");
     
     Ok(true)
 }
